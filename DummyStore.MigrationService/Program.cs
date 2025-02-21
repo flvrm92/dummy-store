@@ -1,5 +1,6 @@
 using DummyStore.Data.Context;
 using DummyStore.MigrationService;
+using DummyStore.ServiceDefaults;
 
 var builder = Host.CreateApplicationBuilder(args);
 
