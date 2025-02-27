@@ -11,13 +11,11 @@ public class UserController(DummyStoreContext context) : Controller
 {
   [HttpGet]
   public async Task<ActionResult<IReadOnlyCollection<User>>> GetAll()
-  {
-    return Ok(await context.Users.ToListAsync());
-  }
+   => Ok(await context.Users.ToListAsync());
 
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<User>> GetById(int id)
+  public async Task<ActionResult<User>> GetById(Guid id)
   {
     var user = await context.Users.FindAsync(id);
     if (user == null)

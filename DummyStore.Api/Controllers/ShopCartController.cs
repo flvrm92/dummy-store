@@ -11,12 +11,10 @@ public class ShopCartController(DummyStoreContext context) : Controller
 {
   [HttpGet]
   public async Task<ActionResult<IReadOnlyCollection<ShopCart>>> GetAll()
-  {
-    return Ok(await context.ShopCarts.ToListAsync());
-  }
+   => Ok(await context.ShopCarts.ToListAsync());
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<ShopCart>> GetById(int id)
+  public async Task<ActionResult<ShopCart>> GetById(Guid id)
   {
     var shopCart = await context.ShopCarts.FindAsync(id);
     if (shopCart == null)
