@@ -1,6 +1,6 @@
 ﻿
 namespace DummyStore.Data.Models;
-public class BaseEntity
+public abstract class BaseEntity
 {
   public BaseEntity()
   {

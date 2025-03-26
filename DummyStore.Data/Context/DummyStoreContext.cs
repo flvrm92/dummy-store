@@ -6,7 +6,7 @@ public class DummyStoreContext(DbContextOptions<DummyStoreContext> options) : Db
 {
   public DbSet<Product> Products { get; set; }
   public DbSet<User> Users { get; set; }
-  public DbSet<ShopCart> ShopCarts { get; set; }
+
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     modelBuilder.Entity<Product>()
@@ -16,10 +16,6 @@ public class DummyStoreContext(DbContextOptions<DummyStoreContext> options) : Db
     modelBuilder.Entity<User>()
       .ToTable("User")
       .HasKey(u => u.Id);
-
-    modelBuilder.Entity<ShopCart>()
-      .ToTable("ShopCart")
-      .HasKey(s => s.Id);
 
     base.OnModelCreating(modelBuilder);
   }

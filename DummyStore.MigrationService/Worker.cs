@@ -56,18 +56,7 @@ public class Worker(IServiceProvider serviceProvider,
   }
 
   private static async Task SeedDataAsync(DummyStoreContext context, CancellationToken cancellationToken)
-  {    
-    User user = new()
-    {
-      Name = "John Doe"
-    };
-
-    Product product = new()
-    {
-      Name = "Product 1",
-      Price = 100
-    };
-
+  {
     var strategy = context.Database.CreateExecutionStrategy();
     await strategy.ExecuteAsync(async () =>
     {
@@ -75,13 +64,41 @@ public class Worker(IServiceProvider serviceProvider,
       await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken);
 
       if (!await context.Users.AnyAsync(cancellationToken))
-        await context.Users.AddAsync(user, cancellationToken);
+        await context.Users.AddRangeAsync(GetUsers(), cancellationToken);
 
       if (!await context.Products.AnyAsync(cancellationToken))
-        await context.Products.AddAsync(product, cancellationToken);
+        await context.Products.AddRangeAsync(GetProducts(), cancellationToken);
 
       await context.SaveChangesAsync(cancellationToken);
       await transaction.CommitAsync(cancellationToken);
     });
   }
+
+
+  public static List<User> GetUsers() => [
+     new() { Name = "Alice" },
+      new() { Name = "Bob" },
+      new() { Name = "Charlie" },
+      new() { Name = "David" },
+      new() { Name = "Eve" },
+      new() { Name = "Frank" },
+      new() { Name = "Grace" },
+      new() { Name = "Hank" },
+      new() { Name = "Ivy" },
+      new() { Name = "Jack" }
+   ];
+
+  private static List<Product> GetProducts() => [
+    new() { Name = "Product 1", Price = 10.0 },
+    new() { Name = "Product 2", Price = 20.0 },
+    new() { Name = "Product 3", Price = 30.0 },
+    new() { Name = "Product 4", Price = 40.0 },
+    new() { Name = "Product 5", Price = 50.0 },
+    new() { Name = "Product 6", Price = 60.0 },
+    new() { Name = "Product 7", Price = 70.0 },
+    new() { Name = "Product 8", Price = 80.0 },
+    new() { Name = "Product 9", Price = 90.0 },
+    new() { Name = "Product 10", Price = 100.0 }
+  ];
+
 }
