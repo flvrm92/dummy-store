@@ -1,32 +1,48 @@
-﻿using DummyStore.Data.Context;
-using DummyStore.Data.Models;
+﻿using DummyStore.Api.Dtos;
+using DummyStore.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DummyStore.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ShopCartController(DummyStoreContext context) : Controller
+public class ShopCartController(IShoppingCartService shoppingCartService) : Controller
 {
-  [HttpGet]
-  public async Task<ActionResult<IReadOnlyCollection<ShopCart>>> GetAll()
-   => Ok(await context.ShopCarts.ToListAsync());
 
   [HttpGet("{id}")]
-  public async Task<ActionResult<ShopCart>> GetById(Guid id)
+  public async Task<ActionResult> GetById(Guid id)
   {
-    var shopCart = await context.ShopCarts.FindAsync(id);
-    if (shopCart == null)
-      return NotFound();
-    return Ok(shopCart);
+    var cart = await shoppingCartService.GetCart(id);
+    return cart is not null ? Ok(cart) : NotFound();
   }
 
   [HttpPost]
-  public async Task<ActionResult<ShopCart>> Create(ShopCart shopCart)
+  public async Task<ActionResult> Create(ShopCartDto input)
   {
-    await context.ShopCarts.AddAsync(shopCart);
-    await context.SaveChangesAsync();
-    return CreatedAtAction(nameof(GetById), new { id = shopCart.Id }, shopCart);
+    if (input is null) return BadRequest();
+
+    await shoppingCartService.CreateCart(input.Id, input.UserId);
+    return Created();
   }
+
+  [HttpPut("AddProduct")]
+  public async Task<IActionResult> AddProduct(ShopCartProductDto input)
+  {
+    await shoppingCartService.AddProduct(input.Id, input.UserId, input.ProductId, input.Quantity);
+    return Ok();
+  }
+
+  [HttpDelete("RemoveProduct")]
+  public async Task<IActionResult> RemoveProduct(ShopCartProductDto input)
+  {
+    await shoppingCartService.RemoveProduct(input.Id, input.UserId, input.ProductId, input.Quantity);
+    return Ok();
+  }
+
+  [HttpPost("Checkout")]
+  public async Task<IActionResult> Checkout(ShopCartDto input)
+  {
+    await shoppingCartService.CheckoutCart(input.Id, input.UserId);
+    return Ok();
+  }  
 }
